@@ -54,7 +54,6 @@ import {appnexus} from '../ads/appnexus';
 import {caprofitx} from '../ads/caprofitx';
 import {chargeads} from '../ads/chargeads';
 import {colombia} from '../ads/colombia';
-import {contentad} from '../ads/contentad';
 import {criteo} from '../ads/criteo';
 import {ezoic} from '../ads/ezoic';
 import {dotandads} from '../ads/dotandads';
@@ -105,6 +104,7 @@ const AMP_EMBED_ALLOWED = {
   'mantis-recommend': true,
   plista: true,
   zergnet: true,
+  _ping_: true,
 };
 
 // Keep the list in alphabetic order
@@ -126,7 +126,6 @@ register('appnexus', appnexus);
 register('caprofitx', caprofitx);
 register('chargeads', chargeads);
 register('colombia', colombia);
-register('contentad', contentad);
 register('criteo', criteo);
 register('dotandads', dotandads);
 register('doubleclick', doubleclick);
@@ -192,7 +191,7 @@ const defaultAllowedTypesInCustomFrame = [
 // List of ad networks that will manually call `window.context.renderStart` to
 // emit render-start event when ad actually starts rendering. Please add
 // yourself here if you'd like to do so (which we encourage).
-const waitForRenderStart = [
+export const waitForRenderStart = [
   'doubleclick',
 ];
 
@@ -211,7 +210,6 @@ export function draw3p(win, data, configCallback) {
   const type = data.type;
   user().assert(win.context.location.originValidated != null,
       'Origin should have been validated');
-
   user().assert(isTagNameAllowed(data.type, win.context.tagName),
       'Embed type %s not allowed with tag %s', data.type, win.context.tagName);
   if (configCallback) {
@@ -319,7 +317,6 @@ window.draw3p = function(opt_configCallback, opt_allowed3pTypes,
         reportRenderedEntityIdentifier;
     window.context.computeInMasterFrame = computeInMasterFrame;
     delete data._context;
-
     manageWin(window);
     installEmbedStateListener();
     draw3p(window, data, opt_configCallback);

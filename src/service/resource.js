@@ -16,7 +16,6 @@
 
 import {layoutRectLtwh, layoutRectsOverlap} from '../layout-rect';
 import {dev} from '../log';
-import {toggle} from '../style';
 
 const TAG = 'Resource';
 const RESOURCE_PROP_ = '__AMP__RESOURCE';
@@ -236,6 +235,7 @@ export class Resource {
     } else {
       this.state_ = ResourceState.NOT_LAID_OUT;
     }
+    this.element.dispatchCustomEvent('amp:built');
   }
 
   /**
@@ -275,6 +275,7 @@ export class Resource {
     this.element.overflowCallback(overflown, requestedHeight, requestedWidth);
   }
 
+  /** @private */
   resetPendingChangeSize() {
     this.pendingChangeSize_ = undefined;
   }
@@ -331,20 +332,6 @@ export class Resource {
     this.isFixed_ = isFixed;
 
     this.element.updateLayoutBox(box);
-  }
-
-  /**
-   * Completes collapse: ensures that the element is `display:none` and
-   * updates layout box.
-   */
-  completeCollapse() {
-    toggle(this.element, false);
-    this.layoutBox_ = layoutRectLtwh(
-        this.layoutBox_.left,
-        this.layoutBox_.top,
-        0, 0);
-    this.isFixed_ = false;
-    this.element.updateLayoutBox(this.layoutBox_);
   }
 
   /**
