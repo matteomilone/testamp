@@ -29,7 +29,7 @@ import {computeInMasterFrame, nextTick, register, run} from './3p';
 import {urls} from '../src/config';
 import {endsWith} from '../src/string';
 import {parseUrl, getSourceUrl, isProxyOrigin} from '../src/url';
-import {initLogConstructor, user} from '../src/log';
+import {dev, initLogConstructor, user} from '../src/log';
 import {getMode} from '../src/mode';
 
 // 3P - please keep in alphabetic order
@@ -159,6 +159,8 @@ try {
   window.context = data._context;
 } catch (err) {
   window.context = {};
+  dev().info(
+      'INTEGRATION', 'Could not parse context from:', iframeName);
 }
 // This should only be invoked after window.context is set
 initLogConstructor();
