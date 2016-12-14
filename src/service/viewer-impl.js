@@ -980,7 +980,8 @@ export class Viewer {
       return Promise.reject(getChannelError());
     }
     return this.messagingReadyPromise_.then(() => {
-      return this.messageDeliverer_(eventType, data, awaitResponse);
+      return Promise.resolve(
+          this.messageDeliverer_(eventType, data, awaitResponse));
     });
   }
 
@@ -997,7 +998,8 @@ export class Viewer {
    */
   sendMessageCancelUnsent(eventType, data, awaitResponse) {
     if (this.messageDeliverer_) {
-      return this.messageDeliverer_(eventType, data, awaitResponse);
+      return Promise.resolve(
+          this.messageDeliverer_(eventType, data, awaitResponse));
     }
 
     const found = findIndex(this.messageQueue_, m => m.eventType == eventType);
