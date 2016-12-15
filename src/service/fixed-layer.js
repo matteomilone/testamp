@@ -171,11 +171,9 @@ export class FixedLayer {
   /**
    * Adds the element directly into the fixed layer, bypassing discovery.
    * @param {!Element} element
-   * @param {boolean=} opt_forceTransfer If set to true , then the element needs
-   *    to be forcefully transferred to the fixed layer.
    */
-  addElement(element, opt_forceTransfer) {
-    this.setupFixedElement_(element, /* selector */ '*', opt_forceTransfer);
+  addElement(element) {
+    this.setupFixedElement_(element, /* selector */ '*');
     this.sortInDomOrder_();
     this.update();
   }
@@ -207,7 +205,7 @@ export class FixedLayer {
    * Performs fixed actions.
    * 1. Updates `top` styling if necessary.
    * 2. On iOS/Iframe moves elements between fixed layer and BODY depending on
-   * whether they are currently visible and fixed
+   * whether they are currently visible and fixed.
    * @return {!Promise}
    */
   update() {
@@ -270,13 +268,9 @@ export class FixedLayer {
           // Element is indeed fixed. Visibility is added to the test to
           // avoid moving around invisible elements.
           const isFixed = (
-            position == 'fixed' && (
-                fe.forceTransfer || (
-                    element./*OK*/offsetWidth > 0 &&
-                    element./*OK*/offsetHeight > 0
-                )
-              )
-            );
+              position == 'fixed' &&
+              element./*OK*/offsetWidth > 0 &&
+              element./*OK*/offsetHeight > 0);
           if (!isFixed) {
             state[fe.id] = {
               fixed: false,
@@ -313,11 +307,11 @@ export class FixedLayer {
           // `height` is constrained to at most 300px. This is to avoid
           // transfering of more substantial sections for now. Likely to be
           // relaxed in the future.
-          const isTransferrable = isFixed && (
-              fe.forceTransfer || (
-                  opacity > 0 &&
-                  element./*OK*/offsetHeight < 300 &&
-                  (this.isAllowedCoord_(top) || this.isAllowedCoord_(bottom))));
+          const isTransferrable = (
+              isFixed &&
+              opacity > 0 &&
+              element./*OK*/offsetHeight < 300 &&
+              (this.isAllowedCoord_(top) || this.isAllowedCoord_(bottom)));
           if (isTransferrable) {
             hasTransferables = true;
           }
@@ -405,11 +399,9 @@ export class FixedLayer {
    *
    * @param {!Element} element
    * @param {string} selector
-   * @param {boolean=} opt_forceTransfer If set to true , then the element needs
-   *    to be forcefully transferred to the fixed layer.
    * @private
    */
-  setupFixedElement_(element, selector, opt_forceTransfer) {
+  setupFixedElement_(element, selector) {
     let fe = null;
     for (let i = 0; i < this.fixedElements_.length; i++) {
       if (this.fixedElements_[i].element == element) {
@@ -432,8 +424,6 @@ export class FixedLayer {
       };
       this.fixedElements_.push(fe);
     }
-
-    fe.forceTransfer = !!opt_forceTransfer;
   }
 
   /**
@@ -678,7 +668,6 @@ export class FixedLayer {
  *   fixedNow: (boolean|undefined),
  *   top: (string|undefined),
  *   transform: (string|undefined),
- *   forceTransfer: (boolean|undefined),
  * }}
  */
 let FixedElementDef;
